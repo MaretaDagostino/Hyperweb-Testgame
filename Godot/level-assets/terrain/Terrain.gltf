@@ -1,0 +1,154 @@
+{
+    "asset" : {
+        "copyright" : "CC0",
+        "generator" : "Khronos glTF Blender I/O v1.2.75",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "mesh" : 0,
+            "name" : "Terrain-col"
+        }
+    ],
+    "materials" : [
+        {
+            "emissiveFactor" : [
+                0,
+                0,
+                0
+            ],
+            "name" : "Terrain",
+            "normalTexture" : {
+                "index" : 0,
+                "texCoord" : 0
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 1,
+                    "texCoord" : 0
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 2,
+                    "texCoord" : 0
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "Terrain",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "source" : 0
+        },
+        {
+            "source" : 1
+        },
+        {
+            "source" : 2
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "Terrain_N",
+            "uri" : "Terrain_N.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Terrain",
+            "uri" : "Terrain.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Terrain_ORM",
+            "uri" : "Terrain_ORM.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 59099,
+            "max" : [
+                100.00170135498047,
+                55.088226318359375,
+                100.00375366210938
+            ],
+            "min" : [
+                -100.00882720947266,
+                -20.51625633239746,
+                -100.00350952148438
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 59099,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 59099,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 71997,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 709188,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 709188,
+            "byteOffset" : 709188
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 472792,
+            "byteOffset" : 1418376
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 143994,
+            "byteOffset" : 1891168
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 2035164,
+            "uri" : "Terrain.bin"
+        }
+    ]
+}

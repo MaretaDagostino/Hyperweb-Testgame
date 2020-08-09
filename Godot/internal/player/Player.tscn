@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://internal/Environment.tres" type="Environment" id=1]
+[ext_resource path="res://internal/player/characters/character.tscn" type="PackedScene" id=2]
+[ext_resource path="res://internal/player/Player.gd" type="Script" id=3]
+
+[sub_resource type="CapsuleShape" id=1]
+radius = 0.4
+
+[node name="Player" type="KinematicBody"]
+script = ExtResource( 3 )
+
+[node name="Head" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0 )
+
+[node name="Camera" type="Camera" parent="Head"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0 )
+cull_mask = 1047551
+environment = ExtResource( 1 )
+doppler_tracking = 2
+current = true
+fov = 80.0
+far = 500.0
+
+[node name="Shape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.9, 0 )
+shape = SubResource( 1 )
+
+[node name="Ground" type="RayCast" parent="."]
+enabled = true
+cast_to = Vector3( 0, -0.15, 0 )
+
+[node name="Character" parent="." instance=ExtResource( 2 )]
+
+[node name="Timers" type="Node" parent="."]
+
+[node name="NetworkSend" type="Timer" parent="Timers"]
+wait_time = 0.01
+one_shot = true
+
+[node name="NetworkSendpos" type="Timer" parent="Timers"]
+wait_time = 0.5
+one_shot = true
