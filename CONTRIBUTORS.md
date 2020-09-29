@@ -6,7 +6,12 @@ Contributions directly into this repository:
 
 Indirect contributions by import of code or artwork, as far as known:
 
+  * Benjamin Navarro
   * "ic3bug"
+  * "Lexpartizan"
+  * Taira Komori
+  * "robobo1221"
+  * Valentin Galea
 
 Some of the code or graphics created by people mentioned here may have
 been removed in the recent commits. Nicknames are in quotation marks.
