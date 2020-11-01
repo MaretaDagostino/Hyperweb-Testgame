@@ -6,6 +6,7 @@ Contributions directly into this repository:
 
 Indirect contributions by import of code or artwork, as far as known:
 
+  * Achim Menzel "AiYori"
   * Benjamin Navarro
   * "ic3bug"
   * "Lexpartizan"
