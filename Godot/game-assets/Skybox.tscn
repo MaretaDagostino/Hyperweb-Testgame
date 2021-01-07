@@ -8,10 +8,10 @@
 [ext_resource path="res://internal/skybox/Thunder.wav" type="AudioStream" id=6]
 [ext_resource path="res://internal/skybox/Water.material" type="Material" id=7]
 
-[sub_resource type="ViewportTexture" id=13]
+[sub_resource type="ViewportTexture" id=1]
 
 [sub_resource type="PanoramaSky" id=2]
-panorama = SubResource( 13 )
+panorama = SubResource( 1 )
 
 [sub_resource type="Environment" id=3]
 background_mode = 2
@@ -19,7 +19,9 @@ background_sky = SubResource( 2 )
 ambient_light_color = Color( 1, 1, 1, 1 )
 ambient_light_energy = 0.75
 ambient_light_sky_contribution = 0.0
-fog_color = Color( 1, 1, 1, 1 )
+fog_enabled = true
+fog_depth_begin = 800.0
+fog_depth_end = 1024.0
 tonemap_mode = 3
 ss_reflections_enabled = true
 adjustment_enabled = true
@@ -140,3 +142,8 @@ centered = false
 
 [node name="Thunder" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 6 )
+
+[node name="Update" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+[connection signal="timeout" from="Update" to="." method="_on_update_timeout"]

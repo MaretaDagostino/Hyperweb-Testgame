@@ -6,6 +6,16 @@ onready var sky_view:Viewport = $SkyViewport
 onready var clouds_view:Viewport = $CloudsViewport
 onready var sky_tex:Sprite = $SkyViewport/SkyTexture
 onready var clouds_tex:Sprite = $CloudsViewport/CloudsTexture
+onready var water_tex:MeshInstance = $Water.mesh
+
+# These are controlled globally
+var time_of_day = 14.0
+var clouds_coverage = 0.5
+var wind_strength = 4.0
+var wind_dir = 130.0
+var fog = 0.2
+var moon_phase = -1.0
+var thunder = false
 
 export (int) var clouds_resolution = 1024 setget set_clouds_resolution
 export (int) var sky_resolution = 1024 setget set_sky_resolution
@@ -20,9 +30,6 @@ export (float, 0.0, 10.0, 0.0001) var sky_mie_coeff = 0.5 setget set_sky_mie_coe
 export (float, 0.0, 2.0, 0.0001) var multiScatterPhase = 0.0 setget set_multiScatterPhase
 export (float, -2.0, 2.0, 0.0001) var anisotropicIntensity = 1.5 setget set_anisotropicIntensity
 
-export (float, 0.0, 23.99, 0.01) var time_of_day = 14.0 setget set_time_of_day
-
-export (float, 0.0, 1.0, 0.0001) var clouds_coverage = 0.5 setget set_clouds_coverage
 export (float, 0.0, 10.0,0.0001) var clouds_size = 2.0 setget set_clouds_size
 export (float, 0.0, 10.0, 0.0001) var clouds_softness = 1.0 setget set_clouds_softness
 export (float, 0.0, 1.0, 0.0001) var clouds_dens = 0.1215 setget set_clouds_dens
@@ -41,10 +48,7 @@ export (Color, RGBA) var moon_tint = Color(1.0, 0.7, 0.35, 1.0) setget set_moon_
 export (Color, RGBA) var clouds_tint = Color(1.0, 1.0, 1.0, 1.0) setget set_clouds_tint
 export (float, 0.0, 1.0, 0.0001) var sun_radius = 0.04 setget set_sun_radius 
 export (float, 0.0, 0.5, 0.0001) var moon_radius = 0.05 setget set_moon_radius
-export (float, -1.0, 1.0, 0.0001) var moon_phase = -1.0 setget set_moon_phase
 export var night_level_light = 0.1 setget set_night_level_light
-export (int, 0, 359) var wind_dir = 130 setget set_wind_dir
-export (float, 0.0, 10.0, 0.1) var wind_strength = 7.0 setget set_wind_strength
 export var lightning_pos: Vector3=Vector3(2.0, 2.0, 2.0) setget set_lightning_pos
 
 func set_call_deff_shader_params(node: Material, params:String, value):
@@ -62,6 +66,31 @@ func set_sky_resolution(value:int):
 		sky_view.size = Vector2(sky_resolution, sky_resolution)
 		sky_tex.texture.set_size_override(Vector2(sky_resolution, sky_resolution))
 
+# Synchronise local environment with global state
+func _on_update_timeout():
+	if time_of_day != Globals.environment.time_of_day:
+		time_of_day = Globals.environment.time_of_day
+		set_time()
+	if clouds_coverage != Globals.environment.clouds_coverage:
+		clouds_coverage = Globals.environment.clouds_coverage
+		set_clouds_coverage()
+	if fog != Globals.environment.fog:
+		fog = Globals.environment.fog
+		set_fog()
+	if wind_strength != Globals.environment.wind_strength:
+		wind_strength = Globals.environment.wind_strength
+		set_wind()
+	if wind_dir != Globals.environment.wind_dir:
+		wind_dir = Globals.environment.wind_dir
+		set_wind()
+	if moon_phase != Globals.environment.moon_phase:
+		moon_phase = Globals.environment.moon_phase
+		set_moon_phase()
+	if thunder != Globals.environment.thunder:
+		thunder = Globals.environment.thunder
+		if thunder == true:
+			thunderstrike()
+
 func _ready():
 	set_lightning_strike(false)
 	call_deferred("_set_attenuation", 3.0)
@@ -70,12 +99,13 @@ func _ready():
 	call_deferred("set_color_sky", color_sky)
 	call_deferred("set_moon_tint", moon_tint)
 	call_deferred("set_clouds_tint", clouds_tint)
-	call_deferred("set_moon_phase", moon_phase)
+	call_deferred("set_moon_phase")
 	call_deferred("set_moon_radius", moon_radius)
-	call_deferred("set_wind_strength", wind_strength)
+	call_deferred("set_wind")
 	call_deferred("set_clouds_quality", clouds_quality)
 	call_deferred("set_clouds_height", clouds_height)
-	call_deferred("set_clouds_coverage", clouds_coverage)
+	call_deferred("set_clouds_coverage")
+	call_deferred("func set_fog")
 	call_deferred("set_time")
 	call_deferred("reflections_update")
 
@@ -96,10 +126,6 @@ func set_sky_gradient(value:GradientTexture):
 
 func set_night_level_light(value:float):
 	night_level_light = clamp(value, 0.0, 1.0)
-	set_time()
-
-func set_time_of_day(value:float):
-	time_of_day = value
 	set_time()
 
 func set_time():
@@ -158,8 +184,7 @@ func set_clouds_height(value:float):
 		call_deferred("set_call_deff_shader_params", clouds_tex.material,
 					"shader_param/HEIGHT", clouds_height)
 
-func set_clouds_coverage(value:float):
-	clouds_coverage = clamp(value, 0.0, 1.0)
+func set_clouds_coverage():
 	if is_inside_tree():
 		call_deferred("set_call_deff_shader_params", clouds_tex.material,
 					"shader_param/ABSORPTION", clouds_coverage + 0.75)
@@ -168,6 +193,10 @@ func set_clouds_coverage(value:float):
 		call_deferred("set_call_deff_shader_params", clouds_tex.material,
 					"shader_param/THICKNESS", clouds_coverage * 10.0 + 10.0)
 		call_deferred("set_time")
+
+func set_fog():
+	if is_inside_tree():
+		env.fog_depth_begin = (1 - fog) * 1000	
 
 func set_clouds_size(value:float):
 	clouds_size = clamp(value, 0.0, 10.0)
@@ -193,19 +222,31 @@ func set_clouds_quality(value:int):
 		call_deferred("set_call_deff_shader_params", clouds_tex.material,
 					"shader_param/STEPS", clamp(clouds_quality, 5, 100))
 
-func set_wind_dir(value:int):
-	wind_dir = value
-	set_wind_strength(wind_strength)
-
-func set_wind_strength(value:float):
-	wind_strength = value
+func set_wind():
 	if is_inside_tree():
 		# calculate game coordinates from real world compass degrees
 		var x_dir = cos(wind_dir * 2.0 * PI / 360.0)
 		var z_dir = -sin(wind_dir * 2.0 * PI / 360.0)
 		call_deferred("set_call_deff_shader_params", clouds_tex.material,
-			"shader_param/WIND", Vector3(x_dir, 0.0, z_dir) * wind_strength / 100)
-	
+			"shader_param/WIND", Vector3(x_dir, 0.0, z_dir) * wind_strength / 150)
+		# adjust water: xy = Direction, z = Steepness, w = Length
+		# optical effects of the chosen constants are try-and-error here
+		var wave_a = Quat(cos((wind_dir - 149) * 2.0 * PI / 360.0),
+						-sin((wind_dir - 149) * 2.0 * PI / 360.0),
+						0.3 * wind_strength, 2.0)
+		var wave_b = Quat(cos((wind_dir + 53) * 2.0 * PI / 360.0),
+						-sin((wind_dir + 53) * 2.0 * PI / 360.0),
+						-0.5 * wind_strength, 4.0)
+		var wave_c = Quat(cos((wind_dir + 61) * 2.0 * PI / 360.0),
+						-sin((wind_dir + 61) * 2.0 * PI / 360.0),
+						0.7 * wind_strength, 3.0)
+		call_deferred("set_call_deff_shader_params", water_tex.material,
+			"shader_param/wave_a", wave_a)
+		call_deferred("set_call_deff_shader_params", water_tex.material,
+			"shader_param/wave_b", wave_b)
+		call_deferred("set_call_deff_shader_params", water_tex.material,
+			"shader_param/wave_c", wave_c)
+
 func set_sun_radius(value:float):
 	sun_radius = clamp(value, 0.0, 1.0)
 	if is_inside_tree():
@@ -218,11 +259,10 @@ func set_moon_radius(value:float):
 		call_deferred("set_call_deff_shader_params", sky_tex.material,
 					"shader_param/moon_radius", value)
 	
-func set_moon_phase(value:float):
-	moon_phase = clamp(value, -1.0, 1.0)
+func set_moon_phase():
 	if is_inside_tree():
 		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/MOON_PHASE", moon_phase)
+					"shader_param/MOON_PHASE", (0.5 + moon_radius) * moon_phase)
 
 func set_sky_tone(value:float):
 	sky_tone = value
@@ -308,7 +348,7 @@ func set_lightning_pos(value):
 		call_deferred("set_call_deff_shader_params", sky_tex.material,
 					"shader_param/LIGHTNING_POS", lightning_pos.normalized())
 
-func thunder():
+func thunderstrike():
 	var thunder_sound:AudioStreamPlayer = $Thunder
 	if thunder_sound.is_playing():
 		return
@@ -317,3 +357,5 @@ func thunder():
 	set_lightning_strike(true)
 	yield(get_tree().create_timer(0.8), "timeout")
 	set_lightning_strike(false)
+	# Ready for next
+	Globals.send_thunder(false)

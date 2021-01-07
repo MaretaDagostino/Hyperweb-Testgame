@@ -52,6 +52,8 @@ func _physics_process(delta):
 	if Globals.is_server == true:
 		# Update player representations
 		update_puppets()
+		# Distribute environment for skyboxes and alike
+		Globals.sync_environment()
 	elif Globals.my_id == name: # Active player
 		rpc_unreliable_id(1, "check_pos", translation)
 		process_input(delta)

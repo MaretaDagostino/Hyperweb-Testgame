@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://level-assets/terrain/Terrain.gltf" type="PackedScene" id=1]
 [ext_resource path="res://game-assets/textures/GravelGround.png" type="Texture" id=2]
+[ext_resource path="res://game-assets/Skybox.tscn" type="PackedScene" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_texture = ExtResource( 2 )
@@ -15,6 +16,8 @@ size = Vector2( 2048, 2048 )
 extents = Vector3( 2048, 2048, 1 )
 
 [node name="Level" type="Spatial"]
+
+[node name="Skybox" parent="." instance=ExtResource( 3 )]
 
 [node name="Terrain" parent="." instance=ExtResource( 1 )]
 
