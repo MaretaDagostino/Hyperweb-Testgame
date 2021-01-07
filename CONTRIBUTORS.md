@@ -10,6 +10,7 @@ Indirect contributions by import of code or artwork, as far as known:
   * Benjamin Navarro
   * "ic3bug"
   * "Lexpartizan"
+  * Sora Sagano
   * Taira Komori
   * "robobo1221"
   * Valentin Galea
