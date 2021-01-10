@@ -6,7 +6,8 @@ onready var sky_view:Viewport = $SkyViewport
 onready var clouds_view:Viewport = $CloudsViewport
 onready var sky_tex:Sprite = $SkyViewport/SkyTexture
 onready var clouds_tex:Sprite = $CloudsViewport/CloudsTexture
-onready var water_tex:MeshInstance = $Water.mesh
+onready var water_tex:PlaneMesh = $Water.mesh
+onready var thunder_sound:AudioStreamPlayer = $Thunder
 
 # These are controlled globally
 var time_of_day = 14.0
@@ -86,16 +87,12 @@ func _on_update_timeout():
 	if moon_phase != Globals.environment.moon_phase:
 		moon_phase = Globals.environment.moon_phase
 		set_moon_phase()
-	if thunder != Globals.environment.thunder:
-		thunder = Globals.environment.thunder
-		if thunder == true:
-			thunderstrike()
+	if (Globals.environment.thunder == true) and (thunder == false):
+		thunder = true
+		thunderstrike()
 
 func _ready():
 	set_lightning_strike(false)
-	call_deferred("_set_attenuation", 3.0)
-	call_deferred("_set_exposure", 1.0)
-	call_deferred("_set_light_size", 0.2)
 	call_deferred("set_color_sky", color_sky)
 	call_deferred("set_moon_tint", moon_tint)
 	call_deferred("set_clouds_tint", clouds_tint)
@@ -105,7 +102,7 @@ func _ready():
 	call_deferred("set_clouds_quality", clouds_quality)
 	call_deferred("set_clouds_height", clouds_height)
 	call_deferred("set_clouds_coverage")
-	call_deferred("func set_fog")
+	call_deferred("set_fog")
 	call_deferred("set_time")
 	call_deferred("reflections_update")
 
@@ -349,13 +346,13 @@ func set_lightning_pos(value):
 					"shader_param/LIGHTNING_POS", lightning_pos.normalized())
 
 func thunderstrike():
-	var thunder_sound:AudioStreamPlayer = $Thunder
-	if thunder_sound.is_playing():
-		return
-	thunder_sound.play()
+	# Play sound only if last one is ready
+	if !thunder_sound.is_playing():
+		thunder_sound.play()
 	yield(get_tree().create_timer(0.3), "timeout")
 	set_lightning_strike(true)
 	yield(get_tree().create_timer(0.8), "timeout")
 	set_lightning_strike(false)
 	# Ready for next
+	thunder = false
 	Globals.send_thunder(false)

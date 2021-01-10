@@ -79,7 +79,7 @@ shader_param/moon_radius = 0.05
 shader_param/sun_radius = 0.04
 shader_param/attenuation = 1.0
 shader_param/LIGHTNING_STRENGTH = Vector3( 0, 0, 0 )
-shader_param/LIGHTNING_POS = Vector3( 2, 2, 2 )
+shader_param/LIGHTNING_POS = Vector3( 0.57735, 0.57735, 0.57735 )
 shader_param/sky_tone = 3.5
 shader_param/sky_density = 0.5
 shader_param/sky_rayleig_coeff = 1.0
@@ -107,6 +107,7 @@ clouds_height = 0.35
 sun_radius = 0.04
 moon_radius = 0.05
 night_level_light = 0.1
+lightning_pos = Vector3( 0.57735, 0.57735, 0.57735 )
 
 [node name="Environment" type="WorldEnvironment" parent="."]
 environment = SubResource( 3 )
