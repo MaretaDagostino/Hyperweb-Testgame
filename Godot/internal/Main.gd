@@ -28,7 +28,7 @@ func _ready():
 		# TODO: Fallback if somebody's Level.tscn has no spawn point
 		spawn_point = $Level/Spawn_Point
 		# We show a small window without start button in server mode
-		$Menu/Button.hide()
+		$Menu/Start_Menu.hide()
 		OS.set_window_size(Vector2(400, 1))
 	else:
 		# Connecting network and button events
@@ -42,7 +42,7 @@ func _ready():
 			self, "_on_connection_failed")
 		var _err_server_disconn = get_tree().connect("server_disconnected",
 			self, "_on_server_disconnected")
-		var _err_button_pressed = $Menu/Button.connect("pressed",
+		var _err_button_pressed = $Menu/Start_Menu/Button_Start.connect("pressed",
 			self, "_on_connect_pressed")
 
 # Server: Create a player and set its name to the ID given by the network API
@@ -101,7 +101,7 @@ func _on_server_disconnected():
 
 # Client: Start the game
 func _on_connect_pressed():
-	$Menu/Button.visible = false
+	$Menu/Start_Menu.visible = false
 	$Menu/Background.visible = false
 	# TODO: send information to user that the game is waiting for
 	#       server connection instead of showing simply a grey screen

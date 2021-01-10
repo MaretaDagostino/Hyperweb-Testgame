@@ -20,6 +20,7 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 ambient_light_energy = 0.75
 ambient_light_sky_contribution = 0.0
 fog_enabled = true
+fog_color = Color( 1, 1, 1, 1 )
 fog_depth_begin = 800.0
 fog_depth_end = 1024.0
 tonemap_mode = 3
@@ -39,7 +40,7 @@ load_path = "res://internal/skybox/Noise.stex"
 
 [sub_resource type="ShaderMaterial" id=6]
 shader = ExtResource( 4 )
-shader_param/WIND = Vector3( -0.0449951, 0, -0.0536231 )
+shader_param/WIND = Vector3( -0.017141, 0, -0.0204279 )
 shader_param/SUN_POS = Vector3( 0, -0.866025, -0.5 )
 shader_param/SIZE = 2.0
 shader_param/SOFTNESS = 1.0
@@ -73,7 +74,7 @@ shader_param/SCATERRING = false
 shader_param/SUN_POS = Vector3( 0, 0.866025, 0.5 )
 shader_param/MOON_POS = Vector3( 0, -0.866025, -0.5 )
 shader_param/MOON_TEX_POS = Vector3( 0, -0.965926, -0.258819 )
-shader_param/MOON_PHASE = -1.0
+shader_param/MOON_PHASE = -0.55
 shader_param/moon_radius = 0.05
 shader_param/sun_radius = 0.04
 shader_param/attenuation = 1.0

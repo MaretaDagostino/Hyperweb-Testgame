@@ -1,0 +1,208 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://internal/menues/Main_Menu.gd" type="Script" id=1]
+[ext_resource path="res://internal/Vegur-Regular.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://Title.jpg" type="Texture" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.199219, 0.199219, 0.199219, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.0535583, 0.064363, 0.152344, 1 )
+border_blend = true
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="DynamicFont" id=2]
+size = 32
+use_filter = true
+font_data = ExtResource( 2 )
+
+[node name="Menu" type="Control"]
+margin_right = 40.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Start_Menu" type="Panel" parent="."]
+modulate = Color( 1, 1, 1, 0.901961 )
+margin_right = 330.0
+margin_bottom = 720.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title_Label" type="Label" parent="Start_Menu"]
+margin_left = 20.0
+margin_top = 10.0
+margin_right = 227.0
+margin_bottom = 77.0
+rect_scale = Vector2( 1.4, 1.4 )
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "Hyperweb
+Testgame"
+align = 1
+valign = 1
+
+[node name="Button_Start" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -250.0
+margin_right = 155.0
+margin_bottom = -200.0
+custom_fonts/font = SubResource( 2 )
+text = "Start game"
+
+[node name="Button_Open_Godot" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -190.0
+margin_right = 155.0
+margin_bottom = -140.0
+custom_fonts/font = SubResource( 2 )
+text = "Open website"
+
+[node name="Button_Options" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -130.0
+margin_right = 155.0
+margin_bottom = -80.0
+custom_fonts/font = SubResource( 2 )
+text = "Options"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button_Quit" type="Button" parent="Start_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -70.0
+margin_right = 155.0
+margin_bottom = -20.0
+custom_fonts/font = SubResource( 2 )
+text = "Quit"
+
+[node name="Options_Menu" type="Panel" parent="."]
+visible = false
+modulate = Color( 1, 1, 1, 0.901961 )
+margin_right = 330.0
+margin_bottom = 720.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title_Label" type="Label" parent="Options_Menu"]
+margin_left = 20.0
+margin_top = 10.0
+margin_right = 227.0
+margin_bottom = 53.0
+rect_scale = Vector2( 1.4, 1.4 )
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 3
+custom_constants/shadow_offset_y = 3
+text = "Options"
+align = 1
+valign = 1
+
+[node name="Label_Mouse_Sensitivity" type="Label" parent="Options_Menu"]
+margin_top = 120.0
+margin_right = 330.0
+margin_bottom = 152.0
+custom_fonts/font = SubResource( 2 )
+text = "Mouse sensitivity"
+align = 1
+valign = 1
+
+[node name="HSlider_Mouse_Sensitivity" type="HSlider" parent="Options_Menu"]
+margin_left = 10.0
+margin_top = 160.0
+margin_right = 320.0
+margin_bottom = 176.0
+min_value = 0.001
+max_value = 0.4
+step = 0.004
+value = 0.012
+
+[node name="Check_Button_VSync" type="CheckButton" parent="Options_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -135.0
+margin_top = -450.0
+margin_right = 135.0
+margin_bottom = -410.0
+custom_fonts/font = SubResource( 2 )
+pressed = true
+text = "V-Sync"
+
+[node name="Button_Fullscreen" type="Button" parent="Options_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -135.0
+margin_top = -400.0
+margin_right = 135.0
+margin_bottom = -350.0
+custom_fonts/font = SubResource( 2 )
+text = "Fullscreen"
+
+[node name="Check_Button_Debug" type="CheckButton" parent="Options_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -150.0
+margin_right = 155.0
+margin_bottom = -110.0
+custom_fonts/font = SubResource( 2 )
+text = "Debug display"
+
+[node name="Button_Back" type="Button" parent="Options_Menu"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -155.0
+margin_top = -70.0
+margin_right = 155.0
+margin_bottom = -20.0
+custom_fonts/font = SubResource( 2 )
+text = "Back"
+
+[node name="Background" type="TextureRect" parent="."]
+show_behind_parent = true
+margin_right = 1280.0
+margin_bottom = 720.0
+mouse_filter = 2
+texture = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

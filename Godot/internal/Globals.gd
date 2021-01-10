@@ -19,7 +19,25 @@ remotesync var environment = {
 	thunder = false,        # set this to true only, will be reset automatically
 }
 
+# Some UI relevant settings...
+
+# The popup scene, and a variable to hold the popup
+const POPUP_SCENE = preload("res://internal/menues/Pause_Popup.tscn")
+var popup = null
+
+# The debug display scene, and a variable to hold the debug display
+const DEBUG_DISPLAY_SCENE = preload("res://internal/menues/Debug_Display.tscn")
+var debug_display = null
+# A canvas layer node so our GUI/UI is always drawn on top
+var canvas_layer = null
+
+# A variable to hold the mouse sensitivity
+var mouse_sensitivity = 0.05
+
 func _ready():
+	# The debug display popup always shall appear on top of everything else
+	canvas_layer = CanvasLayer.new()
+	add_child(canvas_layer)
 	# Is this the server?
 	var args = Array(OS.get_cmdline_args())
 	if args.has("--server"):
@@ -72,3 +90,32 @@ master func receive_moon_phase(value):
 
 master func receive_thunder(value):
 	environment.thunder = value
+
+# Popup display can be activated with escape key, close it here
+func popup_closed():
+	# If we have a popup, destoy it
+	if popup != null:
+		popup.queue_free()
+		popup = null
+	# continue ingame
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
+# Popup display can be activated with escape key, quit the game here 
+func popup_quit():
+	get_tree().quit()
+
+# Debug display can be activated in Options Menu
+func set_debug_display(display_on):
+	# If we are turning off the debug display
+	if display_on == false:
+		# If we have a debug display, then free it and set debug_display to null
+		if debug_display != null:
+			debug_display.queue_free()
+			debug_display = null
+	# If we are turning on the debug display
+	else:
+		# If we do not have a debug display, instance/spawn a new one
+		# and set it to debug_display
+		if debug_display == null:
+			debug_display = DEBUG_DISPLAY_SCENE.instance()
+			canvas_layer.add_child(debug_display)

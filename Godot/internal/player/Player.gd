@@ -3,8 +3,6 @@ class_name Player
 
 # Base player class used by players and puppets.
 
-const MOUSE_SENSITIVITY = 0.05
-
 # Really simple physics simulation
 const physics_const = {
 	GRAVITY = -9.8,
@@ -103,7 +101,8 @@ func process_movement(delta):
 	hvel = hvel.linear_interpolate(dir * physics_const.MAX_SPEED, accel * delta)
 	vel.x = hvel.x
 	vel.z = hvel.z
-	vel = move_and_slide(vel, Vector3.UP, true, 4, deg2rad(physics_const.MAX_SLOPE_ANGLE), true)
+	vel = move_and_slide(vel, Vector3.UP, true, 4,
+			deg2rad(physics_const.MAX_SLOPE_ANGLE), true)
 
 # Active player, move head and camera into mouse direction
 func process_rotations(x : float, y : float):
@@ -125,8 +124,8 @@ func _on_send_timeout():
 func _input(event):
 	if Globals.my_id == name: # Active player
 		if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-			process_rotations(-event.relative.x * MOUSE_SENSITIVITY,
-								-event.relative.y * MOUSE_SENSITIVITY)
+			process_rotations(-event.relative.x * Globals.mouse_sensitivity,
+								-event.relative.y * Globals.mouse_sensitivity)
 	else:
 		pass
 
@@ -158,16 +157,50 @@ func process_input(_delta):
 		cmd.move_right = false
 		rpc_unreliable_id(1, "execute_command", "move_right", false)
 	
-	# Capturing/freeing the cursor
+	# Capturing/freeing the cursor, show and hide popup menu
 	if Input.is_action_just_pressed("ui_cancel"):
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		else:
+		if Globals.popup == null:
+			# Make a new popup scene
+			Globals.popup = Globals.POPUP_SCENE.instance()
+			
+			# Connect the signals
+			Globals.popup.get_node("Button_quit").connect("pressed",
+									Globals, "popup_quit")
+			Globals.popup.connect("popup_hide", Globals, "popup_closed")
+			Globals.popup.get_node("Button_resume").connect("pressed",
+									Globals, "popup_closed")
+			Globals.popup.get_node("Time_of_day").connect("value_changed",
+									Globals, "send_time_of_day")
+			Globals.popup.get_node("Clouds_coverage").connect("value_changed",
+									Globals, "send_clouds_coverage")
+			Globals.popup.get_node("Fog").connect("value_changed",
+									Globals, "send_fog")
+			Globals.popup.get_node("Wind_strength").connect("value_changed",
+									Globals, "send_wind_strength")
+			Globals.popup.get_node("Wind_dir").connect("value_changed",
+									Globals, "send_wind_dir")
+			Globals.popup.get_node("Moon_phase").connect("value_changed",
+									Globals, "send_moon_phase")
+			Globals.popup.get_node("Button_thunder").connect("pressed",
+									Globals, "send_thunder", [true])
+			
+			# Add it as a child, and make it pop up in the center of the screen
+			Globals.canvas_layer.add_child(Globals.popup)
+			Globals.popup.popup_centered()
+			# Get actual values for sliders
+			Globals.popup.get_node("Time_of_day").set_value(Globals.environment.time_of_day)
+			Globals.popup.get_node("Clouds_coverage").set_value(Globals.environment.clouds_coverage)
+			Globals.popup.get_node("Fog").set_value(Globals.environment.fog)
+			Globals.popup.get_node("Wind_strength").set_value(Globals.environment.wind_strength)
+			Globals.popup.get_node("Wind_dir").set_value(Globals.environment.wind_dir)
+			Globals.popup.get_node("Moon_phase").set_value(Globals.environment.moon_phase)
+			# Make sure the mouse is visible
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	
 	# Recapture the mouse on left click
 	if Input.is_action_just_pressed("primary_fire") and Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		if Globals.popup == null:
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 # Server but called from client: Update rotation of active player (not puppets)
 remote func update_rotation(rot, head_rot):
