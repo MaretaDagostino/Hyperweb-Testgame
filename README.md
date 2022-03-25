@@ -2,8 +2,8 @@
 
 This explores features of a first-person multiplayer game using ...
 
-  * Godot 3.2 as game engine,
-  * Blender 2.83 to create assets,
+  * Godot 3.5 as game engine,
+  * Blender 2.83+ to create assets,
   * glTF 2.0 as transmission format between Blender and Godot.
 
 To play the game, first start a server instance with the command line parameter "`--server`".  
