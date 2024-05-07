@@ -1,8 +1,5 @@
 # Godot auto generated files
-Godot/**/*.import
-Godot/level-assets/**/*.material
-Godot/game-assets/**/*.material
-
-# Blender backup files
-Blender/**/*.blend1
+**/*.import
+level-assets/**/*.material
+game-assets/**/*.material
 

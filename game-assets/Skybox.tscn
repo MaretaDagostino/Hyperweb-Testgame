@@ -2,8 +2,8 @@
 
 [ext_resource path="res://internal/skybox/Lightning.png" type="Texture" id=1]
 [ext_resource path="res://internal/skybox/Moon.png" type="Texture" id=2]
-[ext_resource path="res://internal/skybox/Sky.shader" type="Shader" id=3]
-[ext_resource path="res://internal/skybox/Clouds.shader" type="Shader" id=4]
+[ext_resource path="res://internal/skybox/Sky.gdshader" type="Shader" id=3]
+[ext_resource path="res://internal/skybox/Clouds.gdshader" type="Shader" id=4]
 [ext_resource path="res://internal/skybox/Skybox.gd" type="Script" id=5]
 [ext_resource path="res://internal/skybox/Thunder.wav" type="AudioStream" id=6]
 [ext_resource path="res://internal/skybox/Water.material" type="Material" id=7]
