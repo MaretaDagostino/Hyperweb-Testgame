@@ -3,29 +3,13 @@ extends Node
 var start_menu
 var options_menu
 
+var saved_window_size
+# Bug in Godot 4.3: DisplayServer.window_set_position is not implemented for Wayland!
+var saved_window_position
+
 func _ready():
 	start_menu = $Start_Menu
 	options_menu = $Options_Menu
-	
-	# Connect all of the start menu buttons
-	var _err = $Start_Menu/Button_Open_Godot.connect("pressed", self,
-				"start_menu_button_pressed", ["open_website"])
-	_err = $Start_Menu/Button_Options.connect("pressed", self,
-				"start_menu_button_pressed", ["options"])
-	_err = $Start_Menu/Button_Quit.connect("pressed", self,
-				"start_menu_button_pressed", ["quit"])
-		
-	# Connect all of the options menu buttons
-	_err = $Options_Menu/Button_Back.connect("pressed", self,
-				"options_menu_button_pressed", ["back"])
-	_err = $Options_Menu/Button_Fullscreen.connect("pressed", self,
-				"options_menu_button_pressed", ["fullscreen"])
-	_err = $Options_Menu/Check_Button_VSync.connect("pressed", self,
-				"options_menu_button_pressed", ["vsync"])
-	_err = $Options_Menu/Check_Button_Debug.connect("pressed", self,
-				"options_menu_button_pressed", ["debug"])
-	_err = $Options_Menu/HSlider_Mouse_Sensitivity.connect("value_changed", self,
-				"set_mouse_sensitivity")
 	
 	# Set "Game infos" button to inactive as website is empty
 	if !(ProjectSettings.get_setting("application/config/webpage")):
@@ -51,28 +35,41 @@ func _ready():
 	# Get the mouse sensitivity
 	$Options_Menu/HSlider_Mouse_Sensitivity.value = globals.mouse_sensitivity
 
-func start_menu_button_pressed(button_name):
-	# button_name == "start" triggers server connection in Main.gd, not here
-	if button_name == "open_website":
-		var _err = OS.shell_open(ProjectSettings.get_setting("application/config/webpage"))
-	elif button_name == "options":
-		options_menu.visible = true
-		start_menu.visible = false
-	elif button_name == "quit":
-		get_tree().quit()
+# Hint: Button_Start is connected by code in Main node
+func _on_button_open_website_pressed() -> void:
+	var _err = OS.shell_open(ProjectSettings.get_setting("application/config/webpage"))
 
-func options_menu_button_pressed(button_name):
-	if button_name == "back":
-		start_menu.visible = true
-		options_menu.visible = false
-	elif button_name == "fullscreen":
-		OS.window_fullscreen = !OS.window_fullscreen
-	elif button_name == "vsync":
-		OS.vsync_enabled = $Options_Menu/Check_Button_VSync.pressed
-	elif button_name == "debug":
-		get_node("/root/Globals").set_debug_display($Options_Menu/Check_Button_Debug.pressed)
+func _on_button_options_pressed() -> void:
+	options_menu.visible = true
+	start_menu.visible = false
 
-func set_mouse_sensitivity(value):
+func _on_button_quit_pressed() -> void:
+	get_tree().quit()
+
+func _on_button_back_pressed() -> void:
+	start_menu.visible = true
+	options_menu.visible = false
+
+func _on_check_button_fullscreen_toggled(toggled_on: bool) -> void:
+	if toggled_on == true:
+		saved_window_size = DisplayServer.window_get_size()
+		saved_window_position = DisplayServer.window_get_position()
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	if toggled_on == false:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		DisplayServer.window_set_size(saved_window_size)
+		DisplayServer.window_set_position(saved_window_position)
+
+func _on_check_button_v_sync_toggled(toggled_on: bool) -> void:
+	if toggled_on == true:
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
+	if toggled_on == false:
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+
+func _on_check_button_debug_toggled(toggled_on: bool) -> void:
+		get_node("/root/Globals").set_debug_display(toggled_on)
+
+func _on_h_slider_mouse_sensitivity_value_changed(value: float) -> void:
 	# Get the globals singleton
 	var globals = get_node("/root/Globals")
 	# Set the mouse sensitivity

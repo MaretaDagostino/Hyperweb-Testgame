@@ -1,4 +1,4 @@
-extends KinematicBody
+extends CharacterBody3D
 class_name Player
 
 # Base player class used by players and puppets.
@@ -25,22 +25,22 @@ var cmd = {
 	move_right = false,
 }
 
-onready var my_head = get_node("Head")
-onready var my_camera = get_node("Head/Camera")
+@onready var my_head = get_node("Head")
+@onready var my_camera = get_node("Head/Camera3D")
 
 # Networking server: Synchronize position of active player
 var can_send_pos = true
-onready var send_pos_timer = get_node("Timers/NetworkSendpos")
+@onready var send_pos_timer = get_node("Timers/NetworkSendpos")
 const CORRECTION_THRESHOLD = 0.25
 # Networking (server and client)
 var can_send = true
-onready var send_timer = get_node("Timers/NetworkSend")
+@onready var send_timer = get_node("Timers/NetworkSend")
 
 func _ready():
-	var _err_send = send_timer.connect("timeout", self, "_on_send_timeout")
+	var _err_send = send_timer.connect("timeout", Callable(self, "_on_send_timeout"))
 	if Globals.is_server == true:
 		var _err_sendpos = get_node("Timers/NetworkSendpos").connect("timeout",
-										 self, "_on_send_pos_timeout")
+										 Callable(self, "_on_send_pos_timeout"))
 	elif Globals.my_id == name: # Active player
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -53,7 +53,7 @@ func _physics_process(delta):
 		# Distribute environment for skyboxes and alike
 		Globals.sync_environment()
 	elif Globals.my_id == name: # Active player
-		rpc_unreliable_id(1, "check_pos", translation)
+		rpc_id(1, "check_pos", position)
 		process_input(delta)
 
 func process_commands(_delta):
@@ -81,7 +81,7 @@ func process_movement(delta):
 	# Ground detection and gravity
 	if $Ground.is_colliding() == true:
 		var ground_normal = $Ground.get_collision_normal()
-		var ground_angle = rad2deg(acos(ground_normal.dot(Vector3.UP)))
+		var ground_angle = rad_to_deg(acos(ground_normal.dot(Vector3.UP)))
 		# Stand fix on inclined plane
 		if ground_angle > physics_const.MAX_SLOPE_ANGLE:
 			vel.y += delta * physics_const.GRAVITY
@@ -98,21 +98,20 @@ func process_movement(delta):
 			accel = physics_const.ACCEL
 	
 	# Interpolate our velocity (without gravity), then move using move_and_slide
-	hvel = hvel.linear_interpolate(dir * physics_const.MAX_SPEED, accel * delta)
+	hvel = hvel.lerp(dir * physics_const.MAX_SPEED, accel * delta)
 	vel.x = hvel.x
 	vel.z = hvel.z
-	vel = move_and_slide(vel, Vector3.UP, true, 4,
-			deg2rad(physics_const.MAX_SLOPE_ANGLE), true)
+	move_and_slide()
 
 # Active player, move head and camera into mouse direction
 func process_rotations(x : float, y : float):
-	my_head.rotate_x(deg2rad(y))
-	rotate_y(deg2rad(x))
+	my_head.rotate_x(deg_to_rad(y))
+	rotate_y(deg_to_rad(x))
 	var camera_rot = my_head.rotation_degrees
 	camera_rot.x = clamp(camera_rot.x, -85, 85)
 	my_head.rotation_degrees = camera_rot
 	if can_send:
-		rpc_unreliable_id(1, "update_rotation", rotation, my_head.rotation)
+		rpc_id(1, "update_rotation", rotation, my_head.rotation)
 		can_send = false
 		send_timer.start()
 
@@ -134,39 +133,39 @@ func process_input(_delta):
 	# Input
 	if Input.is_action_pressed("move_forward"):
 		cmd.move_forward = true
-		rpc_unreliable_id(1, "execute_command", "move_forward", true)
+		rpc_id(1, "execute_command", "move_forward", true)
 	else:
 		cmd.move_forward = false
-		rpc_unreliable_id(1, "execute_command", "move_forward", false)
+		rpc_id(1, "execute_command", "move_forward", false)
 	if Input.is_action_pressed("move_backward"):
 		cmd.move_backward = true
-		rpc_unreliable_id(1, "execute_command", "move_backward", true)
+		rpc_id(1, "execute_command", "move_backward", true)
 	else:
 		cmd.move_backward = false
-		rpc_unreliable_id(1, "execute_command", "move_backward", false)
+		rpc_id(1, "execute_command", "move_backward", false)
 	if Input.is_action_pressed("move_left"):
 		cmd.move_left = true
-		rpc_unreliable_id(1, "execute_command", "move_left", true)
+		rpc_id(1, "execute_command", "move_left", true)
 	else:
 		cmd.move_left = false
-		rpc_unreliable_id(1, "execute_command", "move_left", false)
+		rpc_id(1, "execute_command", "move_left", false)
 	if Input.is_action_pressed("move_right"):
 		cmd.move_right = true
-		rpc_unreliable_id(1, "execute_command", "move_right", true)
+		rpc_id(1, "execute_command", "move_right", true)
 	else:
 		cmd.move_right = false
-		rpc_unreliable_id(1, "execute_command", "move_right", false)
+		rpc_id(1, "execute_command", "move_right", false)
 	
 	# Capturing/freeing the cursor, show and hide popup menu
 	if Input.is_action_just_pressed("ui_cancel"):
 		if Globals.popup == null:
 			# Make a new popup scene
-			Globals.popup = Globals.POPUP_SCENE.instance()
+			Globals.popup = Globals.POPUP_SCENE.instantiate()
 			
 			# Connect the signals
 			Globals.popup.get_node("Button_quit").connect("pressed",
 									Globals, "popup_quit")
-			Globals.popup.connect("popup_hide", Globals, "popup_closed")
+			Globals.popup.connect("popup_hide", Callable(Globals, "popup_closed"))
 			Globals.popup.get_node("Button_resume").connect("pressed",
 									Globals, "popup_closed")
 			Globals.popup.get_node("Time_of_day").connect("value_changed",
@@ -203,49 +202,51 @@ func process_input(_delta):
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 # Server but called from client: Update rotation of active player (not puppets)
-remote func update_rotation(rot, head_rot):
-	if int(name) == get_tree().get_rpc_sender_id():
+@rpc("any_peer") func update_rotation(rot, head_rot):
+	if int(name) == get_tree().get_remote_sender_id():
 		rotation = rot
 		my_head.rotation = head_rot
 
 # Server but called from client: Update enumeration of command states
 # if self is the target, see function "process_commands"
-remote func execute_command(a, b):
-	if int(name) == get_tree().get_rpc_sender_id():
+@rpc("any_peer") func execute_command(a, b):
+	if int(name) == get_tree().get_remote_sender_id():
 		cmd[a] = b
 
 # Server but called from client: Synchronize position data of the active player
-remote func check_pos(pos):
-	if int(name) == get_tree().get_rpc_sender_id():
+@rpc("any_peer") func check_pos(pos):
+	if int(name) == get_tree().get_remote_sender_id():
 		if global_transform.origin.distance_to(pos) > CORRECTION_THRESHOLD and can_send_pos:
-			rpc_unreliable("correct_pos", global_transform.origin)
+			rpc("correct_pos", global_transform.origin)
 			can_send_pos = false
 			send_pos_timer.start()
 
 # Server
-master func _on_send_pos_timeout():
+### FIXME ###  The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func _on_send_pos_timeout():
 	can_send_pos = true
 
 # Client: Here we update the position of the active player (not puppets)
-puppet func correct_pos(pos):
+@rpc func correct_pos(pos):
 	global_transform.origin = pos
 
 # Server
-master func update_puppets():
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func update_puppets():
 	if can_send:
-		rpc_unreliable("update_puppet", global_transform.origin, rotation,
+		rpc("update_puppet", global_transform.origin, rotation,
 						my_head.rotation, vel, accel, input_movement_vector)
 		can_send = false
 		send_timer.start()
 
 # Client: Here we are updating the position, rotation, head rotation, velocity,
 # acceleration and input vector of puppets (not active player)
-puppet func update_puppet(pos : Vector3, rot : Vector3, h_rot : Vector3,
+@rpc func update_puppet(pos : Vector3, rot : Vector3, h_rot : Vector3,
 							v : Vector3, a : float, imv : Vector2):
 	if Globals.my_id == name: # Active player
 		pass
 	else:
-		translation = pos
+		position = pos
 		rotation = rot
 		my_head.rotation = h_rot
 		vel = v

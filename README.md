@@ -2,7 +2,7 @@
 
 This explores features of a first-person multiplayer game using ...
 
-  * Godot 3.5 as game engine and
+  * Godot 4.3 as game engine and
   * glTF 2.0 as transmission format between Blender and Godot.
 
 To play the game, first start a server instance with the command line parameter "`--server`".  

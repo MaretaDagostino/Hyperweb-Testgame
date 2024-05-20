@@ -1,206 +1,223 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://b6g6mpadepheq"]
 
-[ext_resource path="res://internal/menues/Main_Menu.gd" type="Script" id=1]
-[ext_resource path="res://internal/Vegur-Regular.otf" type="DynamicFontData" id=2]
-[ext_resource path="res://level-assets/Title.jpg" type="Texture" id=3]
+[ext_resource type="Script" path="res://internal/menues/Main_Menu.gd" id="1"]
+[ext_resource type="FontFile" uid="uid://d07wb5nv06che" path="res://internal/Vegur-Regular.otf" id="2"]
+[ext_resource type="Texture2D" uid="uid://b8y4b6c48vdxy" path="res://level-assets/Title.jpg" id="3"]
 
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.199219, 0.199219, 0.199219, 1 )
+[sub_resource type="StyleBoxFlat" id="1"]
+bg_color = Color(0.199219, 0.199219, 0.199219, 1)
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-border_color = Color( 0.0535583, 0.064363, 0.152344, 1 )
+border_color = Color(0.0535583, 0.064363, 0.152344, 1)
 border_blend = true
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[sub_resource type="DynamicFont" id=2]
-size = 32
-use_filter = true
-font_data = ExtResource( 2 )
-
 [node name="Menu" type="Control"]
-margin_right = 40.0
-margin_bottom = 40.0
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1")
 
 [node name="Start_Menu" type="Panel" parent="."]
-modulate = Color( 1, 1, 1, 0.901961 )
-margin_right = 330.0
-margin_bottom = 720.0
-custom_styles/panel = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+modulate = Color(1, 1, 1, 0.901961)
+layout_mode = 0
+offset_right = 330.0
+offset_bottom = 720.0
+theme_override_styles/panel = SubResource("1")
 
 [node name="Title_Label" type="Label" parent="Start_Menu"]
-margin_left = 20.0
-margin_top = 10.0
-margin_right = 227.0
-margin_bottom = 77.0
-rect_scale = Vector2( 1.4, 1.4 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 3
-custom_constants/shadow_offset_y = 3
-custom_fonts/font = SubResource( 2 )
-align = 1
-valign = 1
+layout_mode = 0
+offset_left = 20.0
+offset_top = 10.0
+offset_right = 227.0
+offset_bottom = 77.0
+scale = Vector2(1.4, 1.4)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Button_Start" type="Button" parent="Start_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -155.0
-margin_top = -250.0
-margin_right = 155.0
-margin_bottom = -200.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -155.0
+offset_top = -250.0
+offset_right = 155.0
+offset_bottom = -200.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Start game"
 
-[node name="Button_Open_Godot" type="Button" parent="Start_Menu"]
+[node name="Button_Open_Website" type="Button" parent="Start_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -155.0
-margin_top = -190.0
-margin_right = 155.0
-margin_bottom = -140.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -155.0
+offset_top = -190.0
+offset_right = 155.0
+offset_bottom = -140.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Game infos"
 
 [node name="Button_Options" type="Button" parent="Start_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -155.0
-margin_top = -130.0
-margin_right = 155.0
-margin_bottom = -80.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -155.0
+offset_top = -130.0
+offset_right = 155.0
+offset_bottom = -80.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Options"
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Button_Quit" type="Button" parent="Start_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -155.0
-margin_top = -70.0
-margin_right = 155.0
-margin_bottom = -20.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -155.0
+offset_top = -70.0
+offset_right = 155.0
+offset_bottom = -20.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Quit"
 
 [node name="Options_Menu" type="Panel" parent="."]
 visible = false
-modulate = Color( 1, 1, 1, 0.901961 )
-margin_right = 330.0
-margin_bottom = 720.0
-custom_styles/panel = SubResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+modulate = Color(1, 1, 1, 0.901961)
+layout_mode = 0
+offset_right = 330.0
+offset_bottom = 720.0
+theme_override_styles/panel = SubResource("1")
 
 [node name="Title_Label" type="Label" parent="Options_Menu"]
-margin_left = 20.0
-margin_top = 10.0
-margin_right = 227.0
-margin_bottom = 53.0
-rect_scale = Vector2( 1.4, 1.4 )
-custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
-custom_constants/shadow_offset_x = 3
-custom_constants/shadow_offset_y = 3
-custom_fonts/font = SubResource( 2 )
+layout_mode = 0
+offset_left = 20.0
+offset_top = 10.0
+offset_right = 227.0
+offset_bottom = 53.0
+scale = Vector2(1.4, 1.4)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Options"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Label_Mouse_Sensitivity" type="Label" parent="Options_Menu"]
-margin_top = 120.0
-margin_right = 330.0
-margin_bottom = 152.0
-custom_fonts/font = SubResource( 2 )
+layout_mode = 0
+offset_top = 120.0
+offset_right = 330.0
+offset_bottom = 152.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Mouse sensitivity"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="HSlider_Mouse_Sensitivity" type="HSlider" parent="Options_Menu"]
-margin_left = 10.0
-margin_top = 160.0
-margin_right = 320.0
-margin_bottom = 176.0
+layout_mode = 0
+offset_left = 10.0
+offset_top = 160.0
+offset_right = 320.0
+offset_bottom = 176.0
 min_value = 0.001
 max_value = 0.4
 step = 0.004
-value = 0.012
+value = 0.013
 
 [node name="Check_Button_VSync" type="CheckButton" parent="Options_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -135.0
-margin_top = -450.0
-margin_right = 135.0
-margin_bottom = -410.0
-custom_fonts/font = SubResource( 2 )
-pressed = true
+offset_left = -135.0
+offset_top = -450.0
+offset_right = 135.0
+offset_bottom = -410.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
+button_pressed = true
 text = "V-Sync"
 
-[node name="Button_Fullscreen" type="Button" parent="Options_Menu"]
+[node name="Check_Button_Fullscreen" type="CheckButton" parent="Options_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -135.0
-margin_top = -400.0
-margin_right = 135.0
-margin_bottom = -350.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -135.0
+offset_top = -400.0
+offset_right = 135.0
+offset_bottom = -350.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Fullscreen"
 
 [node name="Check_Button_Debug" type="CheckButton" parent="Options_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -155.0
-margin_top = -150.0
-margin_right = 155.0
-margin_bottom = -110.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -155.0
+offset_top = -150.0
+offset_right = 155.0
+offset_bottom = -110.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Debug display"
 
 [node name="Button_Back" type="Button" parent="Options_Menu"]
+layout_mode = 0
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-margin_left = -155.0
-margin_top = -70.0
-margin_right = 155.0
-margin_bottom = -20.0
-custom_fonts/font = SubResource( 2 )
+offset_left = -155.0
+offset_top = -70.0
+offset_right = 155.0
+offset_bottom = -20.0
+theme_override_fonts/font = ExtResource("2")
+theme_override_font_sizes/font_size = 32
 text = "Back"
 
 [node name="Background" type="TextureRect" parent="."]
 show_behind_parent = true
-margin_right = 1280.0
-margin_bottom = 720.0
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
 mouse_filter = 2
-texture = ExtResource( 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+texture = ExtResource("3")
+
+[connection signal="pressed" from="Start_Menu/Button_Open_Website" to="." method="_on_button_open_website_pressed"]
+[connection signal="pressed" from="Start_Menu/Button_Options" to="." method="_on_button_options_pressed"]
+[connection signal="pressed" from="Start_Menu/Button_Quit" to="." method="_on_button_quit_pressed"]
+[connection signal="value_changed" from="Options_Menu/HSlider_Mouse_Sensitivity" to="." method="_on_h_slider_mouse_sensitivity_value_changed"]
+[connection signal="toggled" from="Options_Menu/Check_Button_VSync" to="." method="_on_check_button_v_sync_toggled"]
+[connection signal="toggled" from="Options_Menu/Check_Button_Fullscreen" to="." method="_on_check_button_fullscreen_toggled"]
+[connection signal="toggled" from="Options_Menu/Check_Button_Debug" to="." method="_on_check_button_debug_toggled"]
+[connection signal="pressed" from="Options_Menu/Button_Back" to="." method="_on_button_back_pressed"]

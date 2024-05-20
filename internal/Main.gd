@@ -1,53 +1,53 @@
 extends Node
 
 # Here we can specify the public IP address for playing through the internet.
-export var IP_ADDR = "localhost"
+@export var IP_ADDR = "localhost"
 # Port can be changed, but mus be the same as the server's.
 # Make sure your ISP doesn't block it. Also open it in the router settings.
-export var PORT = 7936
+@export var PORT = 7936
 
 const MAX_PLAYERS = 15
 var spawn_point = null
 
-var enet : NetworkedMultiplayerENet
+var enet : ENetMultiplayerPeer
 
-onready var player_tscn = preload("res://internal/player/Player.tscn")
+@onready var player_tscn = preload("res://internal/player/Player.tscn")
 
 func _ready():
 	# Creating a new network instance
-	enet = NetworkedMultiplayerENet.new()
+	enet = ENetMultiplayerPeer.new()
 	if Globals.is_server == true:
 		var _network = enet.create_server(PORT, MAX_PLAYERS)
-		get_tree().set_network_peer(enet)
+		get_tree().set_multiplayer_peer(enet)
 		# Connecting network events
-		var _err_connected = get_tree().connect("network_peer_connected",
-			self, "_on_client_connected")
-		var _err_disconnected = get_tree().connect("network_peer_disconnected",
-			self, "_on_client_disconnected")
+		var _err_connected = get_tree().connect("peer_connected",
+			Callable(self, "_on_client_connected"))
+		var _err_disconnected = get_tree().connect("peer_disconnected",
+			Callable(self, "_on_client_disconnected"))
 		# Set spawn point for players
 		# TODO: Fallback if somebody's Level.tscn has no spawn point
 		spawn_point = $Level/Spawn_Point
 		# We show a small window without start button in server mode
 		$Menu/Start_Menu.hide()
-		OS.set_window_size(Vector2(400, 1))
+		get_window().set_size(Vector2(400, 1))
 	else:
 		# Connecting network and button events
-		var _err_connected = get_tree().connect("network_peer_connected",
-			self, "_on_player_connected")
-		var _err_disconnected = get_tree().connect("network_peer_disconnected",
-			self, "_on_player_disconnected")
+		var _err_connected = get_tree().connect("peer_connected",
+			Callable(self, "_on_player_connected"))
+		var _err_disconnected = get_tree().connect("peer_disconnected",
+			Callable(self, "_on_player_disconnected"))
 		var _err_conn_to_server = get_tree().connect("connected_to_server",
-			self, "_on_connected_to_server")
+			Callable(self, "_on_connected_to_server"))
 		var _err_conn_failed = get_tree().connect("connection_failed",
-			self, "_on_connection_failed")
+			Callable(self, "_on_connection_failed"))
 		var _err_server_disconn = get_tree().connect("server_disconnected",
-			self, "_on_server_disconnected")
+			Callable(self, "_on_server_disconnected"))
 		var _err_button_pressed = $Menu/Start_Menu/Button_Start.connect("pressed",
-			self, "_on_connect_pressed")
+			Callable(self, "_on_connect_pressed"))
 
 # Server: Create a player and set its name to the ID given by the network API
 func _on_client_connected(id):
-	var player = player_tscn.instance()
+	var player = player_tscn.instantiate()
 	player.set_name(str(id))
 	$Players.add_child(player)
 	player.global_transform.origin = spawn_point.global_transform.origin
@@ -63,19 +63,19 @@ func _on_client_disconnected(id):
 
 # Client: Other player enters the game
 func _on_player_connected(id):
-	var player = player_tscn.instance()
+	var player = player_tscn.instantiate()
 	player.set_name(str(id))
 	# Replace camera with dummy, otherwise it steals focus from active player
-	var dummy = Spatial.new()
-	dummy.name = "Camera"
-	player.get_node("Head/Camera").replace_by(dummy)
+	var dummy = Node3D.new()
+	dummy.name = "Camera3D"
+	player.get_node("Head/Camera3D").replace_by(dummy)
 	# Add puppet, this is a player without camera
 	$Players.add_child(player)
 
 # Client: Other player leaves the game
 func _on_player_disconnected(id):
 	# Wait a little time for execution of pending RPC communication
-	yield(get_tree().create_timer(0.5),"timeout")
+	await get_tree().create_timer(0.5).timeout
 	# Remove puppet from scene
 	for p in $Players.get_children():
 		if int(p.name) == id:
@@ -84,15 +84,15 @@ func _on_player_disconnected(id):
 
 # Client: After successful connection create a player instance and activate camera
 func _on_connected_to_server():
-	Globals.my_id = str(get_tree().get_network_unique_id())
-	var player = player_tscn.instance()
+	Globals.my_id = str(get_tree().get_unique_id())
+	var player = player_tscn.instantiate()
 	player.set_name(Globals.my_id)
 	$Players.add_child(player)
 
 # Client: Called after some time without successful connection
 func _on_connection_failed():
 	# TODO: Better reaction and information to user, endless grey screen here
-	get_tree().set_network_peer(null)
+	get_tree().set_multiplayer_peer(null)
 
 # Client: Quit if network breaks
 func _on_server_disconnected():
@@ -106,4 +106,4 @@ func _on_connect_pressed():
 	# TODO: send information to user that the game is waiting for
 	#       server connection instead of showing simply a grey screen
 	var _err_client = enet.create_client(IP_ADDR, PORT)
-	get_tree().set_network_peer(enet)
+	### FIXME ### get_tree().set_multiplayer_peer(enet)

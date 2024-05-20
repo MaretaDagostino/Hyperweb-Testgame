@@ -1,15 +1,13 @@
 extends Node
 
 # This script is global. It autoloads and we can access it from other scripts.
-
-# A Variable to distinguish between server and client
 var is_server = false
 
 # Player ID to distinguish between active player and others (puppets)
 var my_id = ""
 
 # Inworld reference environment for skyboxes and alike
-remotesync var environment = {
+var environment = {
 	time_of_day = 14.0,     # 0 to <24
 	clouds_coverage = 0.5,  # 0 to 1
 	fog = 0.2,              # 0 to 1, density
@@ -44,8 +42,9 @@ func _ready():
 		is_server = true
 
 # Server: Distribute environment for skyboxes and alike
+### FIXME ### Old "rset" was blindly replaced with "rpc", surely some server/client logic is missing now! 
 func sync_environment():
-	rset("environment", Globals.environment)
+	rpc("environment", Globals.environment)
 
 # Clients: Ask server to modify environment features
 func send_time_of_day(value):
@@ -70,25 +69,32 @@ func send_thunder(value):
 	rpc("receive_thunder", value)
 
 # Server: Receive request to modify environment features
-master func receive_time_of_day(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_time_of_day(value):
 	environment.time_of_day = value
 
-master func receive_clouds_coverage(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_clouds_coverage(value):
 	environment.clouds_coverage = value
 
-master func receive_fog(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_fog(value):
 	environment.fog = value
 
-master func receive_wind_strength(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_wind_strength(value):
 	environment.wind_strength = value
 
-master func receive_wind_dir(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_wind_dir(value):
 	environment.wind_dir = value
 
-master func receive_moon_phase(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_moon_phase(value):
 	environment.moon_phase = value
 
-master func receive_thunder(value):
+### FIXME ### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+@rpc func receive_thunder(value):
 	environment.thunder = value
 
 # Popup display can be activated with escape key, close it here
@@ -117,5 +123,5 @@ func set_debug_display(display_on):
 		# If we do not have a debug display, instance/spawn a new one
 		# and set it to debug_display
 		if debug_display == null:
-			debug_display = DEBUG_DISPLAY_SCENE.instance()
+			debug_display = DEBUG_DISPLAY_SCENE.instantiate()
 			canvas_layer.add_child(debug_display)
