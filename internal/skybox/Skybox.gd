@@ -1,56 +1,46 @@
-tool
-extends Spatial
-onready var env:Environment = $Environment.environment
-onready var sun:DirectionalLight = $SunMoon
-onready var sky_view:Viewport = $SkyViewport
-onready var clouds_view:Viewport = $CloudsViewport
-onready var sky_tex:Sprite = $SkyViewport/SkyTexture
-onready var clouds_tex:Sprite = $CloudsViewport/CloudsTexture
-onready var water_tex:PlaneMesh = $Water.mesh
-onready var thunder_sound:AudioStreamPlayer = $Thunder
+@tool
+extends Node3D
+@onready var env:Environment = $Environment.environment
+@onready var sun:DirectionalLight3D = $SunMoon
+@onready var sky_view:SubViewport = $SkyViewport
+@onready var clouds_view:SubViewport = $CloudsViewport
+@onready var sky_tex:Sprite2D = $SkyViewport/SkyTexture
+@onready var clouds_tex:Sprite2D = $CloudsViewport/CloudsTexture
+@onready var water_tex:PlaneMesh = $Water.mesh
+@onready var thunder_sound:AudioStreamPlayer = $Thunder
 
 # These are controlled globally
 var time_of_day = 14.0
 var clouds_coverage = 0.5
 var wind_strength = 4.0
 var wind_dir = 130.0
-var fog = 0.2
+var fog = 0.25
 var moon_phase = -1.0
 var thunder = false
 
-export (int) var clouds_resolution = 1024 setget set_clouds_resolution
-export (int) var sky_resolution = 1024 setget set_sky_resolution
+@export var clouds_resolution = 1024: set = set_clouds_resolution
+@export var sky_resolution = 1024: set = set_sky_resolution
 
-export (GradientTexture) var sky_gradient_texture:GradientTexture setget set_sky_gradient
-export (bool) var SCATERRING = true setget set_SCATERRING
-export (Color, RGBA) var color_sky = Color(0.156863, 0.392157, 1, 1) setget set_color_sky
-export (float, 0.0, 10.0, 0.0001) var sky_tone = 3.5 setget set_sky_tone
-export (float, 0.0, 2.0, 0.0001) var sky_density = 0.5 setget set_sky_density
-export (float, 0.0, 10.0, 0.0001) var sky_rayleig_coeff = 1.0 setget set_sky_rayleig_coeff
-export (float, 0.0, 10.0, 0.0001) var sky_mie_coeff = 0.5 setget set_sky_mie_coeff
-export (float, 0.0, 2.0, 0.0001) var multiScatterPhase = 0.0 setget set_multiScatterPhase
-export (float, -2.0, 2.0, 0.0001) var anisotropicIntensity = 1.5 setget set_anisotropicIntensity
-
-export (float, 0.0, 10.0,0.0001) var clouds_size = 2.0 setget set_clouds_size
-export (float, 0.0, 10.0, 0.0001) var clouds_softness = 1.0 setget set_clouds_softness
-export (float, 0.0, 1.0, 0.0001) var clouds_dens = 0.1215 setget set_clouds_dens
-export (float, 0.0, 1.0, 0.0001) var clouds_height = 0.35 setget set_clouds_height
-export (int, 5, 100) var clouds_quality = 100 setget set_clouds_quality
+@export var clouds_size = 2.0: set = set_clouds_size
+@export var clouds_softness = 1.0: set = set_clouds_softness
+@export var clouds_dens = 0.1215: set = set_clouds_dens
+@export var clouds_height = 0.35: set = set_clouds_height
+@export var clouds_quality = 100: set = set_clouds_quality
 var sun_pos:Vector3
 var moon_pos:Vector3
 var iTime = 0.0
 
-export (Color, RGBA) var moon_light = Color(0.6, 0.6, 0.8, 1.0)
-export (Color, RGBA) var sunset_light = Color(1.0, 0.7, 0.55, 1.0)
-export (float, -0.3, 0.3, 0.000001) var sunset_offset = -0.1
-export (float, 0.0, 0.3, 0.000001) var sunset_range = 0.2
-export (Color, RGBA) var day_light = Color(1.0, 1.0, 1.0, 1.0)
-export (Color, RGBA) var moon_tint = Color(1.0, 0.7, 0.35, 1.0) setget set_moon_tint
-export (Color, RGBA) var clouds_tint = Color(1.0, 1.0, 1.0, 1.0) setget set_clouds_tint
-export (float, 0.0, 1.0, 0.0001) var sun_radius = 0.04 setget set_sun_radius 
-export (float, 0.0, 0.5, 0.0001) var moon_radius = 0.05 setget set_moon_radius
-export var night_level_light = 0.1 setget set_night_level_light
-export var lightning_pos: Vector3=Vector3(2.0, 2.0, 2.0) setget set_lightning_pos
+@export var moon_light = Color(0.6, 0.6, 0.8, 1.0)
+@export var sunset_light = Color(1.0, 0.7, 0.55, 1.0)
+@export var sunset_offset = -0.1
+@export var sunset_range = 0.2
+@export var day_light = Color(1.0, 1.0, 1.0, 1.0)
+@export var moon_tint = Color(1.0, 0.7, 0.35, 1.0): set = set_moon_tint
+@export var clouds_tint = Color(1.0, 1.0, 1.0, 1.0): set = set_clouds_tint
+@export var sun_radius = 0.04: set = set_sun_radius
+@export var moon_radius = 0.05: set = set_moon_radius
+@export var night_level_light = 0.1: set = set_night_level_light
+@export var lightning_pos: Vector3=Vector3(2.0, 2.0, 2.0): set = set_lightning_pos
 
 func set_call_deff_shader_params(node: Material, params:String, value):
 	node.set(params,value)
@@ -59,13 +49,13 @@ func set_clouds_resolution(value:int):
 	clouds_resolution = value
 	if is_inside_tree():
 		clouds_view.size = Vector2(clouds_resolution, clouds_resolution)
-		clouds_tex.texture.set_size_override(Vector2(clouds_resolution, clouds_resolution))
+		clouds_tex.texture.set_size_2d_override(Vector2(clouds_resolution, clouds_resolution))
 
 func set_sky_resolution(value:int):
 	sky_resolution = value
 	if is_inside_tree():
 		sky_view.size = Vector2(sky_resolution, sky_resolution)
-		sky_tex.texture.set_size_override(Vector2(sky_resolution, sky_resolution))
+		sky_tex.texture.set_size_2d_override(Vector2(sky_resolution, sky_resolution))
 
 # Synchronise local environment with global state
 func _on_update_timeout():
@@ -93,7 +83,6 @@ func _on_update_timeout():
 
 func _ready():
 	set_lightning_strike(false)
-	call_deferred("set_color_sky", color_sky)
 	call_deferred("set_moon_tint", moon_tint)
 	call_deferred("set_clouds_tint", clouds_tint)
 	call_deferred("set_moon_phase")
@@ -104,22 +93,6 @@ func _ready():
 	call_deferred("set_clouds_coverage")
 	call_deferred("set_fog")
 	call_deferred("set_time")
-	call_deferred("reflections_update")
-
-func reflections_update():
-	env.background_sky.set_panorama(sky_view.get_texture())
-
-func set_SCATERRING(value:bool):
-	SCATERRING = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/SCATERRING", SCATERRING)
-
-func set_sky_gradient(value:GradientTexture):
-	sky_gradient_texture = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/sky_gradient_texture", sky_gradient_texture)
 
 func set_night_level_light(value:float):
 	night_level_light = clamp(value, 0.0, 1.0)
@@ -173,7 +146,6 @@ func set_time():
 	env.ambient_light_energy = light_energy
 	env.ambient_light_color = light_color
 	env.adjustment_saturation = 1 - clouds_coverage * 0.5
-	env.set_fog_color(light_color)
 
 func set_clouds_height(value:float):
 	clouds_height = clamp(value, 0.0, 1.0)
@@ -193,7 +165,7 @@ func set_clouds_coverage():
 
 func set_fog():
 	if is_inside_tree():
-		env.fog_depth_begin = (1 - fog) * 1000	
+		env.volumetric_fog_density = fog / 5.0
 
 func set_clouds_size(value:float):
 	clouds_size = clamp(value, 0.0, 10.0)
@@ -228,13 +200,13 @@ func set_wind():
 			"shader_param/WIND", Vector3(x_dir, 0.0, z_dir) * wind_strength / 150)
 		# adjust water: xy = Direction, z = Steepness, w = Length
 		# optical effects of the chosen constants are try-and-error here
-		var wave_a = Quat(cos((wind_dir - 149) * 2.0 * PI / 360.0),
+		var wave_a = Quaternion(cos((wind_dir - 149) * 2.0 * PI / 360.0),
 						-sin((wind_dir - 149) * 2.0 * PI / 360.0),
 						0.3 * wind_strength, 2.0)
-		var wave_b = Quat(cos((wind_dir + 53) * 2.0 * PI / 360.0),
+		var wave_b = Quaternion(cos((wind_dir + 53) * 2.0 * PI / 360.0),
 						-sin((wind_dir + 53) * 2.0 * PI / 360.0),
 						-0.5 * wind_strength, 4.0)
-		var wave_c = Quat(cos((wind_dir + 61) * 2.0 * PI / 360.0),
+		var wave_c = Quaternion(cos((wind_dir + 61) * 2.0 * PI / 360.0),
 						-sin((wind_dir + 61) * 2.0 * PI / 360.0),
 						0.7 * wind_strength, 3.0)
 		call_deferred("set_call_deff_shader_params", water_tex.material,
@@ -260,48 +232,6 @@ func set_moon_phase():
 	if is_inside_tree():
 		call_deferred("set_call_deff_shader_params", sky_tex.material,
 					"shader_param/MOON_PHASE", (0.5 + moon_radius) * moon_phase)
-
-func set_sky_tone(value:float):
-	sky_tone = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/sky_tone", sky_tone)
-
-func set_sky_density(value:float):
-	sky_density = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/sky_density", sky_density)
-
-func set_sky_rayleig_coeff(value:float):
-	sky_rayleig_coeff = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/sky_rayleig_coeff", sky_rayleig_coeff)
-		
-func set_sky_mie_coeff(value:float):
-	sky_mie_coeff = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/sky_mie_coeff", sky_mie_coeff)
-
-func set_multiScatterPhase(value:float):
-	multiScatterPhase = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/multiScatterPhase", multiScatterPhase)
-
-func set_anisotropicIntensity(value:float):
-	anisotropicIntensity = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/anisotropicIntensity", anisotropicIntensity)
-
-func set_color_sky(value:Color):
-	color_sky = value
-	if is_inside_tree():
-		call_deferred("set_call_deff_shader_params", sky_tex.material,
-					"shader_param/color_sky", color_sky)
 
 func set_moon_tint(value:Color):
 	moon_tint = value
@@ -349,9 +279,9 @@ func thunderstrike():
 	# Play sound only if last one is ready
 	if !thunder_sound.is_playing():
 		thunder_sound.play()
-	yield(get_tree().create_timer(0.3), "timeout")
+	await get_tree().create_timer(0.3).timeout
 	set_lightning_strike(true)
-	yield(get_tree().create_timer(0.8), "timeout")
+	await get_tree().create_timer(0.8).timeout
 	set_lightning_strike(false)
 	# Ready for next
 	thunder = false

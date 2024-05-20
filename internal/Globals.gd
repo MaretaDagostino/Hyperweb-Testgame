@@ -9,15 +9,15 @@ var is_server = false
 var my_id = ""
 
 # Inworld reference environment for skyboxes and alike
-remotesync var environment = {
-	time_of_day = 14.0,     # 0 to <24
-	clouds_coverage = 0.5,  # 0 to 1
-	fog = 0.2,              # 0 to 1, density
-	wind_strength = 4.0,    # 0 to 10
-	wind_dir = 130.0,       # 0 to <360 clockwise, 0 is wind from north
-	moon_phase = -1.0,      # -1 to 1, new moon is 0
-	thunder = false,        # set this to true only, will be reset automatically
-}
+###FIXME### remotesync var environment = {
+#	time_of_day = 14.0,     # 0 to <24
+#	clouds_coverage = 0.5,  # 0 to 1
+#	fog = 0.2,              # 0 to 1, density
+#	wind_strength = 4.0,    # 0 to 10
+#	wind_dir = 130.0,       # 0 to <360 clockwise, 0 is wind from north
+#	moon_phase = -1.0,      # -1 to 1, new moon is 0
+#	thunder = false,        # set this to true only, will be reset automatically
+#}
 
 # Some UI relevant settings...
 
@@ -44,8 +44,8 @@ func _ready():
 		is_server = true
 
 # Server: Distribute environment for skyboxes and alike
-func sync_environment():
-	rset("environment", Globals.environment)
+###FIXME### func sync_environment():
+###FIXME### 	rset("environment", Globals.environment)
 
 # Clients: Ask server to modify environment features
 func send_time_of_day(value):
@@ -70,26 +70,33 @@ func send_thunder(value):
 	rpc("receive_thunder", value)
 
 # Server: Receive request to modify environment features
-master func receive_time_of_day(value):
-	environment.time_of_day = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_time_of_day(value):
+###FIXME### 	environment.time_of_day = value
 
-master func receive_clouds_coverage(value):
-	environment.clouds_coverage = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_clouds_coverage(value):
+###FIXME### 	environment.clouds_coverage = value
 
-master func receive_fog(value):
-	environment.fog = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_fog(value):
+###FIXME### 	environment.fog = value
 
-master func receive_wind_strength(value):
-	environment.wind_strength = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_wind_strength(value):
+###FIXME### 	environment.wind_strength = value
 
-master func receive_wind_dir(value):
-	environment.wind_dir = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_wind_dir(value):
+###FIXME### 	environment.wind_dir = value
 
-master func receive_moon_phase(value):
-	environment.moon_phase = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_moon_phase(value):
+###FIXME### 	environment.moon_phase = value
 
-master func receive_thunder(value):
-	environment.thunder = value
+###FIXME### The master and mastersync rpc behavior is not officially supported anymore. Try using another keyword or making custom logic using get_multiplayer().get_remote_sender_id()
+#@rpc func receive_thunder(value):
+###FIXME### 	environment.thunder = value
 
 # Popup display can be activated with escape key, close it here
 func popup_closed():
@@ -117,5 +124,5 @@ func set_debug_display(display_on):
 		# If we do not have a debug display, instance/spawn a new one
 		# and set it to debug_display
 		if debug_display == null:
-			debug_display = DEBUG_DISPLAY_SCENE.instance()
+			debug_display = DEBUG_DISPLAY_SCENE.instantiate()
 			canvas_layer.add_child(debug_display)

@@ -8,24 +8,24 @@ func _ready():
 	options_menu = $Options_Menu
 	
 	# Connect all of the start menu buttons
-	var _err = $Start_Menu/Button_Open_Godot.connect("pressed", self,
-				"start_menu_button_pressed", ["open_website"])
-	_err = $Start_Menu/Button_Options.connect("pressed", self,
-				"start_menu_button_pressed", ["options"])
-	_err = $Start_Menu/Button_Quit.connect("pressed", self,
-				"start_menu_button_pressed", ["quit"])
-		
+	var _err = $Start_Menu/Button_Open_Godot.connect("pressed",
+				Callable(self, "start_menu_button_pressed")) ###FIXME###, ["open_website"]))
+	_err = $Start_Menu/Button_Options.connect("pressed",
+				Callable(self, "start_menu_button_pressed")) ###FIXME###, ["options"]))
+	_err = $Start_Menu/Button_Quit.connect("pressed",
+				Callable(self, "start_menu_button_pressed")) ###FIXME###, ["quit"]))
+	
 	# Connect all of the options menu buttons
-	_err = $Options_Menu/Button_Back.connect("pressed", self,
-				"options_menu_button_pressed", ["back"])
-	_err = $Options_Menu/Button_Fullscreen.connect("pressed", self,
-				"options_menu_button_pressed", ["fullscreen"])
-	_err = $Options_Menu/Check_Button_VSync.connect("pressed", self,
-				"options_menu_button_pressed", ["vsync"])
-	_err = $Options_Menu/Check_Button_Debug.connect("pressed", self,
-				"options_menu_button_pressed", ["debug"])
-	_err = $Options_Menu/HSlider_Mouse_Sensitivity.connect("value_changed", self,
-				"set_mouse_sensitivity")
+	_err = $Options_Menu/Button_Back.connect("pressed",
+				Callable(self, "options_menu_button_pressed")) ###FIXME###, ["back"]))
+	_err = $Options_Menu/Button_Fullscreen.connect("pressed",
+				Callable(self, "options_menu_button_pressed")) ###FIXME###, ["fullscreen"]))
+	_err = $Options_Menu/Check_Button_VSync.connect("pressed",
+				Callable(self, "options_menu_button_pressed")) ###FIXME###, ["vsync"]))
+	_err = $Options_Menu/Check_Button_Debug.connect("pressed",
+				Callable(self, "options_menu_button_pressed")) ###FIXME###, ["debug"]))
+	_err = $Options_Menu/HSlider_Mouse_Sensitivity.connect("value_changed",
+				Callable(self, "set_mouse_sensitivity"))
 	
 	# Set "Game infos" button to inactive as website is empty
 	if !(ProjectSettings.get_setting("application/config/webpage")):
@@ -66,9 +66,9 @@ func options_menu_button_pressed(button_name):
 		start_menu.visible = true
 		options_menu.visible = false
 	elif button_name == "fullscreen":
-		OS.window_fullscreen = !OS.window_fullscreen
+		get_window().mode = Window.MODE_EXCLUSIVE_FULLSCREEN if (!((get_window().mode == Window.MODE_EXCLUSIVE_FULLSCREEN) or (get_window().mode == Window.MODE_FULLSCREEN))) else Window.MODE_WINDOWED
 	elif button_name == "vsync":
-		OS.vsync_enabled = $Options_Menu/Check_Button_VSync.pressed
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED if ($Options_Menu/Check_Button_VSync.pressed) else DisplayServer.VSYNC_DISABLED)
 	elif button_name == "debug":
 		get_node("/root/Globals").set_debug_display($Options_Menu/Check_Button_Debug.pressed)
 

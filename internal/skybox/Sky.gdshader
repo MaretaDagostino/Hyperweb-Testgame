@@ -24,9 +24,9 @@ uniform float sky_mie_coeff:hint_range(0.0, 10.0);
 uniform float multiScatterPhase:hint_range(0.0, 2.0);
 uniform float anisotropicIntensity:hint_range(-2.0, 2.0);
 
-uniform vec4 color_sky:hint_color;
-uniform vec4 moon_tint:hint_color;
-uniform vec4 clouds_tint:hint_color;
+uniform vec4 color_sky:source_color;
+uniform vec4 moon_tint:source_color;
+uniform vec4 clouds_tint:source_color;
 
 varying mat4 cam_matrix;
 

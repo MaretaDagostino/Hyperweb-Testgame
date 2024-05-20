@@ -1,151 +1,141 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=22 format=3 uid="uid://ovs3sfnla6d"]
 
-[ext_resource path="res://internal/skybox/Lightning.png" type="Texture" id=1]
-[ext_resource path="res://internal/skybox/Moon.png" type="Texture" id=2]
-[ext_resource path="res://internal/skybox/Sky.gdshader" type="Shader" id=3]
-[ext_resource path="res://internal/skybox/Clouds.gdshader" type="Shader" id=4]
-[ext_resource path="res://internal/skybox/Skybox.gd" type="Script" id=5]
-[ext_resource path="res://internal/skybox/Thunder.wav" type="AudioStream" id=6]
-[ext_resource path="res://internal/skybox/Water.material" type="Material" id=7]
+[ext_resource type="Texture2D" uid="uid://dt3cs42b037xm" path="res://internal/skybox/Lightning.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://biykqybjcuguy" path="res://internal/skybox/Moon.png" id="2"]
+[ext_resource type="Shader" path="res://internal/skybox/Sky.gdshader" id="3"]
+[ext_resource type="Shader" path="res://internal/skybox/Clouds.gdshader" id="4"]
+[ext_resource type="Script" path="res://internal/skybox/Skybox.gd" id="5"]
+[ext_resource type="AudioStream" uid="uid://btbl5u67a5y6t" path="res://internal/skybox/Thunder.wav" id="6"]
+[ext_resource type="Material" uid="uid://v213c826aaj7" path="res://internal/skybox/Water.material" id="7"]
 
-[sub_resource type="ViewportTexture" id=1]
+[sub_resource type="Gradient" id="Gradient_dc6gt"]
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0.12549, 1)
 
-[sub_resource type="PanoramaSky" id=2]
-panorama = SubResource( 1 )
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vxwnq"]
+gradient = SubResource("Gradient_dc6gt")
+fill_from = Vector2(1, 1)
+fill_to = Vector2(0.994253, 0)
 
-[sub_resource type="Environment" id=3]
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_nqga1"]
+mie_color = Color(1, 0.705013, 0.565491, 1)
+energy_multiplier = 2.0
+night_sky = SubResource("GradientTexture2D_vxwnq")
+
+[sub_resource type="Sky" id="Sky_5nfgp"]
+sky_material = SubResource("PhysicalSkyMaterial_nqga1")
+
+[sub_resource type="Environment" id="Environment_dnm1x"]
 background_mode = 2
-background_sky = SubResource( 2 )
-ambient_light_color = Color( 1, 1, 1, 1 )
-ambient_light_energy = 0.75
+sky = SubResource("Sky_5nfgp")
+ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_sky_contribution = 0.0
-fog_enabled = true
-fog_color = Color( 1, 1, 1, 1 )
-fog_depth_begin = 800.0
-fog_depth_end = 1024.0
+ambient_light_energy = 0.75
 tonemap_mode = 3
-ss_reflections_enabled = true
-adjustment_enabled = true
+ssr_enabled = true
+volumetric_fog_enabled = true
 adjustment_saturation = 0.75
 
-[sub_resource type="PlaneMesh" id=4]
-material = ExtResource( 7 )
-size = Vector2( 2048, 2048 )
+[sub_resource type="PlaneMesh" id="4"]
+material = ExtResource("7")
+size = Vector2(2048, 2048)
 subdivide_width = 256
 subdivide_depth = 256
 
-[sub_resource type="StreamTexture" id=5]
-flags = 7
-load_path = "res://internal/skybox/Noise.stex"
+[sub_resource type="CompressedTexture2D" id="5"]
 
-[sub_resource type="ShaderMaterial" id=6]
-shader = ExtResource( 4 )
-shader_param/WIND = Vector3( -0.017141, 0, -0.0204279 )
-shader_param/SUN_POS = Vector3( 0, -0.866025, -0.5 )
-shader_param/SIZE = 2.0
-shader_param/SOFTNESS = 1.0
-shader_param/COVERAGE = 0.55
-shader_param/HEIGHT = 0.35
-shader_param/THICKNESS = 15.0
-shader_param/ABSORPTION = 1.25
-shader_param/STEPS = 100
-shader_param/Noise = SubResource( 5 )
+[sub_resource type="ShaderMaterial" id="6"]
+shader = ExtResource("4")
+shader_parameter/WIND = Vector3(-0.017141, 0, -0.0204279)
+shader_parameter/SUN_POS = Vector3(0, -0.866025, -0.5)
+shader_parameter/SIZE = 2.0
+shader_parameter/SOFTNESS = 1.0
+shader_parameter/COVERAGE = 0.55
+shader_parameter/HEIGHT = 0.35
+shader_parameter/THICKNESS = 15.0
+shader_parameter/ABSORPTION = 1.25
+shader_parameter/STEPS = 100
+shader_parameter/Noise = SubResource("5")
 
-[sub_resource type="ImageTexture" id=7]
-flags = 4
-lossy_quality = 1.0
-flags = 4
-size = Vector2( 1024, 1024 )
+[sub_resource type="ImageTexture" id="7"]
 
-[sub_resource type="ViewportTexture" id=8]
+[sub_resource type="ViewportTexture" id="8"]
 viewport_path = NodePath("CloudsViewport")
 
-[sub_resource type="Gradient" id=9]
-offsets = PoolRealArray( 0.00645161, 0.341935, 1 )
-colors = PoolColorArray( 0.968627, 0.247059, 0.0784314, 1, 0.239216, 0.635294, 0.984314, 1, 0.109804, 0.352941, 1, 1 )
+[sub_resource type="Gradient" id="9"]
+offsets = PackedFloat32Array(0.00645161, 0.341935, 1)
+colors = PackedColorArray(0.968627, 0.247059, 0.0784314, 1, 0.239216, 0.635294, 0.984314, 1, 0.109804, 0.352941, 1, 1)
 
-[sub_resource type="GradientTexture" id=10]
-gradient = SubResource( 9 )
+[sub_resource type="GradientTexture2D" id="10"]
+gradient = SubResource("9")
 
-[sub_resource type="ShaderMaterial" id=11]
+[sub_resource type="ShaderMaterial" id="11"]
 resource_local_to_scene = true
-shader = ExtResource( 3 )
-shader_param/SCATERRING = false
-shader_param/SUN_POS = Vector3( 0, 0.866025, 0.5 )
-shader_param/MOON_POS = Vector3( 0, -0.866025, -0.5 )
-shader_param/MOON_TEX_POS = Vector3( 0, -0.965926, -0.258819 )
-shader_param/MOON_PHASE = -0.55
-shader_param/moon_radius = 0.05
-shader_param/sun_radius = 0.04
-shader_param/attenuation = 1.0
-shader_param/LIGHTNING_STRENGTH = Vector3( 0, 0, 0 )
-shader_param/LIGHTNING_POS = Vector3( 0.57735, 0.57735, 0.57735 )
-shader_param/sky_tone = 3.5
-shader_param/sky_density = 0.5
-shader_param/sky_rayleig_coeff = 1.0
-shader_param/sky_mie_coeff = 0.5
-shader_param/multiScatterPhase = 0.0
-shader_param/anisotropicIntensity = 1.5
-shader_param/color_sky = Color( 0.156863, 0.392157, 1, 1 )
-shader_param/moon_tint = Color( 1, 0.7, 0.35, 1 )
-shader_param/clouds_tint = Color( 1, 1, 1, 1 )
-shader_param/MOON = ExtResource( 2 )
-shader_param/cloud_env_texture = SubResource( 8 )
-shader_param/lightning_texture = ExtResource( 1 )
-shader_param/sky_gradient_texture = SubResource( 10 )
+shader = ExtResource("3")
+shader_parameter/SCATERRING = false
+shader_parameter/SUN_POS = Vector3(0, 0.866025, 0.5)
+shader_parameter/MOON_POS = Vector3(0, -0.866025, -0.5)
+shader_parameter/MOON_TEX_POS = Vector3(0, -0.965926, -0.258819)
+shader_parameter/MOON_PHASE = -0.55
+shader_parameter/moon_radius = 0.05
+shader_parameter/sun_radius = 0.04
+shader_parameter/attenuation = 1.0
+shader_parameter/LIGHTNING_STRENGTH = Vector3(0, 0, 0)
+shader_parameter/LIGHTNING_POS = Vector3(0.57735, 0.57735, 0.57735)
+shader_parameter/sky_tone = 3.5
+shader_parameter/sky_density = 0.5
+shader_parameter/sky_rayleig_coeff = 1.0
+shader_parameter/sky_mie_coeff = 0.5
+shader_parameter/multiScatterPhase = 0.0
+shader_parameter/anisotropicIntensity = 1.5
+shader_parameter/color_sky = Color(0.156863, 0.392157, 1, 1)
+shader_parameter/moon_tint = Color(1, 0.7, 0.35, 1)
+shader_parameter/clouds_tint = Color(1, 1, 1, 1)
+shader_parameter/MOON = ExtResource("2")
+shader_parameter/cloud_env_texture = SubResource("8")
+shader_parameter/lightning_texture = ExtResource("1")
+shader_parameter/sky_gradient_texture = SubResource("10")
 
-[sub_resource type="ImageTexture" id=12]
-flags = 0
-lossy_quality = 1.0
-flags = 0
-size = Vector2( 1024, 1024 )
+[sub_resource type="ImageTexture" id="12"]
 
-[node name="Skybox" type="Spatial"]
-script = ExtResource( 5 )
-clouds_dens = 0.1215
-clouds_height = 0.35
-sun_radius = 0.04
-moon_radius = 0.05
-night_level_light = 0.1
-lightning_pos = Vector3( 0.57735, 0.57735, 0.57735 )
+[node name="Skybox" type="Node3D"]
+script = ExtResource("5")
+lightning_pos = Vector3(0.57735, 0.57735, 0.57735)
 
 [node name="Environment" type="WorldEnvironment" parent="."]
-environment = SubResource( 3 )
+environment = SubResource("Environment_dnm1x")
 
-[node name="SunMoon" type="DirectionalLight" parent="."]
-transform = Transform( 1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0.866025, 0.5 )
+[node name="SunMoon" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0.866025, 0.5)
 light_energy = 0.75
 shadow_enabled = true
-shadow_color = Color( 0.3, 0.3, 0.3, 1 )
-directional_shadow_depth_range = 1
 
-[node name="Water" type="MeshInstance" parent="."]
-mesh = SubResource( 4 )
-material/0 = null
+[node name="Water" type="MeshInstance3D" parent="."]
+mesh = SubResource("4")
 
-[node name="CloudsViewport" type="Viewport" parent="."]
-size = Vector2( 1024, 1024 )
+[node name="CloudsViewport" type="SubViewport" parent="."]
 transparent_bg = true
+size = Vector2i(1024, 1024)
 render_target_update_mode = 3
 
-[node name="CloudsTexture" type="Sprite" parent="CloudsViewport"]
-material = SubResource( 6 )
-texture = SubResource( 7 )
+[node name="CloudsTexture" type="Sprite2D" parent="CloudsViewport"]
+material = SubResource("6")
+texture = SubResource("7")
 centered = false
 
-[node name="SkyViewport" type="Viewport" parent="."]
-size = Vector2( 1024, 1024 )
+[node name="SkyViewport" type="SubViewport" parent="."]
+size = Vector2i(1024, 1024)
 render_target_update_mode = 3
 
-[node name="SkyTexture" type="Sprite" parent="SkyViewport"]
-material = SubResource( 11 )
-texture = SubResource( 12 )
+[node name="SkyTexture" type="Sprite2D" parent="SkyViewport"]
+material = SubResource("11")
+texture = SubResource("12")
 centered = false
 
 [node name="Thunder" type="AudioStreamPlayer" parent="."]
-stream = ExtResource( 6 )
+stream = ExtResource("6")
 
 [node name="Update" type="Timer" parent="."]
 wait_time = 0.5
 autostart = true
+
 [connection signal="timeout" from="Update" to="." method="_on_update_timeout"]

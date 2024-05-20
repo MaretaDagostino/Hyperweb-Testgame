@@ -28,6 +28,11 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 shader_type spatial;
 render_mode cull_disabled,diffuse_burley,specular_schlick_ggx,blend_mix;
 
+// In Godot 4.x DEPTH_TEXTURE and SCREEN_TEXTURE have been removed in favor of using
+// hint_depth_texture and hint_screen_texture with uniforms. Workaround:
+uniform sampler2D DEPTH_TEXTURE : hint_depth_texture, filter_linear_mipmap;
+uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
+
 // Wave settings:
 uniform float wave_speed = 0.05; // Speed scale for the waves
 // xy = Direction, z = Steepness, w = Length
@@ -44,7 +49,7 @@ uniform vec2 sampler_scale = vec2(0.2, 0.2);
 uniform vec2 sampler_direction = vec2(0.05, 0.01);
 
 // UV motion sampler for shifting the normalmap
-uniform sampler2D uv_sampler : hint_aniso;
+uniform sampler2D uv_sampler : hint_anisotropy;
 // UV sampler scale
 uniform vec2 uv_sampler_scale = vec2(0.25, 0.25);
 // UV shifting strength
@@ -55,16 +60,16 @@ uniform sampler2D normalmap_a_sampler : hint_normal;
 // Normalmap sampler B
 uniform sampler2D normalmap_b_sampler : hint_normal;
 
-uniform sampler2D foam_sampler : hint_black; // Foam sampler
+uniform sampler2D foam_sampler : hint_default_black; // Foam sampler
 uniform float foam_level = 0.5; // Foam level -> distance from the object (0.0 - 0.5)
 
 // Volume settings:
 uniform float refraction = 0.075; // Refraction of the water
 
  // Color for deep places in the water, medium to dark blue
-uniform vec4 color_deep : hint_color;
+uniform vec4 color_deep : source_color;
 // Color for lower places in the water, bright blue - green
-uniform vec4 color_shallow : hint_color;
+uniform vec4 color_shallow : source_color;
 // Beers law value, regulates the blending size to the deep water level
 uniform float beers_law = 1.3;
 // Offset for the blending
@@ -73,7 +78,7 @@ uniform float depth_offset = 0.1;
 // Projector for the water caustics:
 uniform mat4 projector; // Projector matrix, mostly the matric of the sun/directlight
 // Caustic sampler, (Texture array with 16 Textures for the animation)
-uniform sampler2DArray caustic_sampler : hint_black;
+uniform sampler2DArray caustic_sampler : hint_default_black;
 
 // Vertex -> Fragment:
 varying float vertex_height; // Height of the water surface
@@ -109,7 +114,7 @@ void vertex()
 	float time = TIME * wave_speed;
 	
 	vec4 vertex = vec4(VERTEX, 1.0);
-	vec3 vertex_position = (WORLD_MATRIX * vertex).xyz;
+	vec3 vertex_position = (MODEL_MATRIX * vertex).xyz;
 	
 	vertex_tangent 	 = vec3(0.0, 0.0, 0.0);
 	vertex_binormal  = vec3(0.0, 0.0, 0.0);
@@ -190,6 +195,6 @@ void fragment()
 	METALLIC = 0.1;
 	ROUGHNESS = 0.2;
 	SPECULAR = 0.2 + depth_blend_pow * 0.4;
-	NORMALMAP = normalmap;
-	NORMALMAP_DEPTH = 1.25;
+	NORMAL_MAP = normalmap;
+	NORMAL_MAP_DEPTH = 1.25;
 }
