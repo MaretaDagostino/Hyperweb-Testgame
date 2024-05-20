@@ -27,6 +27,20 @@ func _ready():
 	_err = $Options_Menu/HSlider_Mouse_Sensitivity.connect("value_changed", self,
 				"set_mouse_sensitivity")
 	
+	# Set "Game infos" button to inactive as website is empty
+	if !(ProjectSettings.get_setting("application/config/webpage")):
+		ProjectSettings.set("application/config/webpage", "")
+		ProjectSettings.save()
+	if ProjectSettings.get_setting("application/config/webpage") == "":
+		$Start_Menu/Button_Open_Godot.disabled = true
+	
+	# Extract title from project name by adding line breaks
+	var temp1 = ProjectSettings.get_setting("application/config/name")
+	var temp2 = temp1.replace("-", "\n")
+	var temp3 = temp2.replace("_","\n")
+	var game_title = temp3.replace(" ","\n")
+	$Start_Menu/Title_Label.text = game_title
+	
 	# Some times when returning to the title screen the mouse is still captured
 	# even though it shouldn't be. To prevent this from breaking the game,
 	# we just set it here too
@@ -40,7 +54,7 @@ func _ready():
 func start_menu_button_pressed(button_name):
 	# button_name == "start" triggers server connection in Main.gd, not here
 	if button_name == "open_website":
-		var _err = OS.shell_open("https://github.com/MaretaDagostino/Hyperweb-Testgame")
+		var _err = OS.shell_open(ProjectSettings.get_setting("application/config/webpage"))
 	elif button_name == "options":
 		options_menu.visible = true
 		start_menu.visible = false

@@ -22,7 +22,8 @@ _global_script_class_icons={
 
 config/name="Hyperweb-Testgame"
 run/main_scene="res://internal/Main.tscn"
-config/icon="res://Icon.png"
+config/icon="res://level-assets/Icon.png"
+config/webpage="https://github.com/MaretaDagostino/Hyperweb-Testgame"
 
 [autoload]
 
