@@ -3,6 +3,9 @@ extends Node
 var start_menu
 var options_menu
 
+var saved_window_size
+var saved_window_position
+
 func _ready():
 	start_menu = $Start_Menu
 	options_menu = $Options_Menu
@@ -18,7 +21,7 @@ func _ready():
 	# Connect all of the options menu buttons
 	_err = $Options_Menu/Button_Back.connect("pressed", self,
 				"options_menu_button_pressed", ["back"])
-	_err = $Options_Menu/Button_Fullscreen.connect("pressed", self,
+	_err = $Options_Menu/Check_Button_Fullscreen.connect("pressed", self,
 				"options_menu_button_pressed", ["fullscreen"])
 	_err = $Options_Menu/Check_Button_VSync.connect("pressed", self,
 				"options_menu_button_pressed", ["vsync"])
@@ -66,7 +69,14 @@ func options_menu_button_pressed(button_name):
 		start_menu.visible = true
 		options_menu.visible = false
 	elif button_name == "fullscreen":
-		OS.window_fullscreen = !OS.window_fullscreen
+		if $Options_Menu/Check_Button_Fullscreen.pressed == true:
+			saved_window_size = OS.window_size
+			saved_window_position = OS.window_position
+			OS.window_fullscreen = true
+		else:
+			OS.window_fullscreen = false
+			OS.window_size = saved_window_size
+			OS.window_position = saved_window_position
 	elif button_name == "vsync":
 		OS.vsync_enabled = $Options_Menu/Check_Button_VSync.pressed
 	elif button_name == "debug":
